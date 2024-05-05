@@ -150,6 +150,8 @@
 
             console.log(list)
 
+            list.sort((a, b) => b.items[0].statistics.likeCount - a.items[0].statistics.likeCount)
+
             for (let video of list) {
                 const id    = video.items[0].id
                 const title = video.items[0].snippet.localized.title.replace('[제139주년 무악대동제 h:OURS 무대지원 영상] ', '')
