@@ -1,0 +1,10 @@
+body {
+  padding: 50px;
+  font: 14px "Noto Sans KR", Helvetica, Arial, sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+a {
+  color: #00B7FF;
+}

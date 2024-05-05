@@ -1,0 +1,105 @@
+extends layout
+
+block content
+  h1 2024 대동제 노천극장 무대 지원 영상 리스트
+
+  ul#list
+
+  script(src="https://apis.google.com/js/api.js")
+  //- script.
+    /**
+    * Sample JavaScript code for youtube.videos.list
+    * See instructions for running APIs Explorer code samples locally:
+    * https://developers.google.com/explorer-help/code-samples#javascript
+    */
+
+    function authenticate() {
+      return gapi.auth2.getAuthInstance()
+          .signIn({scope: "https://www.googleapis.com/auth/youtube.readonly"})
+          .then(function() { console.log("Sign-in successful"); },
+                function(err) { console.error("Error signing in", err); });
+    }
+    function loadClient() {
+      gapi.client.setApiKey("AIzaSyA0uoLs2gytEP-XpkLmr6T-gy9ihdCgxSQ");
+      return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+          .then(function() { console.log("GAPI client loaded for API"); },
+                function(err) { console.error("Error loading GAPI client for API", err); });
+    }
+    // Make sure the client is loaded and sign-in is complete before calling this method.
+    function execute() {
+      return gapi.client.youtube.videos.list({
+        "part": [
+          "statistics"
+        ],
+        "id": [
+          "T5Ecc70ONv8"
+        ]
+      })
+      .then(function(response) {
+        // Handle the results here (response.result has the parsed body).
+        console.log("Response", response);
+      },
+      function(err) { console.error("Execute error", err); });
+    }
+
+    gapi.load("client:auth2", function() {
+      gapi.auth2.init({client_id: "308790003260-oq09pjpo1k6f9phaufp1rreef1q23gd7.apps.googleusercontent.com"});
+    });
+
+  //- button(onclick="authenticate().then(loadClient)") authorize and load
+  //- button(onclick="execute()") execute
+  //- button(onclick="getData()") getData
+ 
+  script.
+    const API_KEY = 'AIzaSyA0uoLs2gytEP-XpkLmr6T-gy9ihdCgxSQ'
+    const videos = [
+      'T5Ecc70ONv8',
+      'qMAsKYrHN2k',
+      'xuNlROyT5d8',
+      'uqMicrV3hzI',
+      'Wo2jyd4_tbQ',
+      'V_XV99y1aZo',
+      'kob0iksZPrM',
+      'bNQrRrD0wqo',
+      'Z3BnuC2JI8U',
+      'QzfvGeaFZuI',
+      'AvfgyKsgLsA',
+      '1Y1GGxgxAIc',
+      'nI2qg-QgqtY'
+    ]
+    const list = []
+
+    async function main() {
+
+      for (let videoId of videos) {
+        const URL = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2C%20statistics&id=${videoId}&key=${API_KEY}`
+        const data = await getData(URL)
+
+        //- console.log(videoId, data)
+        list.push(data)
+      }
+
+      console.log(list)
+
+      for (let video of list) {
+        const title = video.items[0].snippet.localized.title.replace('[제139주년 무악대동제 h:OURS 무대지원 영상] ', '')
+        const stats = video.items[0].statistics
+        const score = parseInt(stats.likeCount) * 100 + parseInt(stats.viewCount)
+
+        console.log(title, stats)
+
+        $('#list').append(`<li><div>${title}</div><div><span>점수 ${score}</span> 좋아요 ${stats.likeCount} 조회수 ${stats.viewCount} 댓글 ${stats.commentCount}</div></li>`)
+      }
+    }
+    
+    $(document).ready(function() {
+      main()
+    })
+
+
+    async function getData(url) {
+      const response = await fetch(url)
+      const jsonData = await response.json()
+
+      return jsonData
+    }
